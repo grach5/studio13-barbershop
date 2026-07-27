@@ -52,6 +52,16 @@
   --dur: 0.3s;
 
   --wrap-max: 1180px;
+
+  /* Interactive 3D effects — tilt / parallax / medallion spin */
+  --tilt-perspective: 900px;
+  --tilt-icon-lift: 20px;
+  --c-tilt-glare: rgba(212, 219, 226, 0.32);
+  --c-tilt-shadow: rgba(0, 0, 0, 0.55);
+  --c-tilt-rim: rgba(180, 138, 85, 0.35);
+  --medallion-spin-dur: 13s;
+  --parallax-blade-speed: 0.18;
+  --parallax-texture-speed: 0.06;
 }
 
 /* ==========================================================================
@@ -196,6 +206,41 @@ address { font-style: normal; }
   font-size: 20px;
   fill: var(--c-brass-light);
 }
+
+/* ==========================================================================
+   Medallion — continuous 3D coin-turn on the signature "13" badge
+   ========================================================================== */
+.medallion-3d {
+  perspective: 240px;
+}
+.medallion-rotor {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  transform-style: preserve-3d;
+  animation: medallion-spin var(--medallion-spin-dur) linear infinite;
+}
+.footer-brand .medallion-rotor {
+  width: 34px;
+  height: 34px;
+}
+.medallion-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+.medallion-face-back {
+  transform: rotateY(180deg);
+}
+@keyframes medallion-spin {
+  to { transform: rotateY(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .medallion-rotor { animation: none; }
+}
 .wordmark-text {
   font-family: var(--f-display);
   font-size: 1.3rem;
@@ -256,18 +301,23 @@ address { font-style: normal; }
 }
 .hero-texture {
   position: absolute;
-  inset: 0;
+  inset: -20% 0;
   opacity: 0.5;
   background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 6px);
   pointer-events: none;
+  will-change: transform;
 }
 .hero-blade {
   position: absolute;
-  top: 0; right: -10%;
-  width: 55%; height: 100%;
+  top: -15%; right: -10%;
+  width: 55%; height: 130%;
   color: var(--c-steel-dark);
   opacity: 0.35;
   pointer-events: none;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-texture, .hero-blade { transform: none !important; }
 }
 .hero-inner { position: relative; max-width: 760px; }
 
@@ -404,32 +454,58 @@ address { font-style: normal; }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
+  perspective: var(--tilt-perspective);
 }
 .service-card {
+  position: relative;
   background: var(--c-surface);
   border: 1px solid var(--c-border-soft);
   border-radius: var(--r-lg);
   padding: var(--space-4) var(--space-3);
-  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 .service-card:hover {
   transform: translateY(-4px);
   border-color: var(--c-brass);
 }
+/* Metallic sheen that tracks the pointer — set via --mx/--my by script.js */
+.service-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 20%), var(--c-tilt-glare), transparent 58%);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+  pointer-events: none;
+}
+.service-card.is-tilting::before { opacity: 1; }
 .service-icon {
+  position: relative;
   width: 56px; height: 56px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   background: var(--c-surface-2);
   color: var(--c-brass-light);
   margin-bottom: var(--space-2);
+  transform: translateZ(var(--iconz, 0px));
+  transition: transform var(--dur) var(--ease);
 }
 .service-card h3 {
+  position: relative;
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
-.service-card p { color: var(--c-text-dim); font-size: 0.95rem; margin-bottom: 0; }
+.service-card p { position: relative; color: var(--c-text-dim); font-size: 0.95rem; margin-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card { transform: none !important; }
+  .service-icon { transform: none !important; }
+  .service-card::before { display: none; }
+}
 
 /* ==========================================================================
    Gallery — CSS texture tiles
