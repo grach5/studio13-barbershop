@@ -80,6 +80,74 @@
     revealTargets.forEach(function (el) { observer.observe(el); });
   }
 
+  /* ---------- Blade-line reveal: razor sweeps across the element while a
+     diagonal clip-path "cuts" it open — used on the services feature photo,
+     gallery figures, and the blade-dividers between sections. ---------- */
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    var bladeTargets = document.querySelectorAll('.blade-reveal, .blade-divider');
+
+    var bladeObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-cut');
+          bladeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -6% 0px' });
+
+    bladeTargets.forEach(function (el) { bladeObserver.observe(el); });
+  } else {
+    // Reduced motion (or no IO support): show the final "cut" state immediately.
+    document.querySelectorAll('.blade-reveal, .blade-divider').forEach(function (el) {
+      el.classList.add('is-cut');
+    });
+  }
+
+  /* ---------- Animated trust counters: "5.0" rating and "30" reviews count
+     up from 0 once the trust panel scrolls into view. Purely a visual
+     flourish — the real, final figures (data-count-to) are unchanged. ---------- */
+  var countTargets = document.querySelectorAll('[data-count-to]');
+
+  function runCount(el) {
+    var raw = el.getAttribute('data-count-to');
+    var target = parseFloat(raw);
+    if (isNaN(target)) return;
+    var decimals = raw.indexOf('.') > -1 ? raw.split('.')[1].length : 0;
+    var duration = 1200;
+    var startTime = null;
+
+    function frame(now) {
+      if (startTime === null) startTime = now;
+      var progress = Math.min((now - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out-cubic
+      var value = target * eased;
+      el.textContent = value.toFixed(decimals);
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        el.textContent = raw; // lock to the exact original text
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  if (countTargets.length) {
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      // Nothing to do: the elements already contain their real, final values.
+    } else {
+      var countObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            runCount(entry.target);
+            countObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+
+      countTargets.forEach(function (el) { countObserver.observe(el); });
+    }
+  }
+
   /* ---------- Service cards: 3D pointer tilt ---------- */
   if (!prefersReduced) {
     var TILT_MAX = 7; // degrees, matches the ±6-8° premium/subtle spec

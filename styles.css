@@ -294,15 +294,51 @@ address { font-style: normal; }
   position: relative;
   overflow: hidden;
   padding: var(--space-6) 0 var(--space-5);
+  background: var(--c-bg);
+}
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  z-index: 0;
+}
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   background:
-    radial-gradient(ellipse at 15% 0%, rgba(139,150,163,0.14), transparent 55%),
-    radial-gradient(ellipse at 85% 100%, rgba(124,43,43,0.16), transparent 55%),
-    var(--c-bg);
+    radial-gradient(ellipse at 15% 0%, rgba(139,150,163,0.20), transparent 55%),
+    radial-gradient(ellipse at 85% 100%, rgba(124,43,43,0.24), transparent 55%),
+    linear-gradient(100deg, rgba(18,21,26,0.94) 0%, rgba(18,21,26,0.86) 38%, rgba(18,21,26,0.55) 68%, rgba(18,21,26,0.4) 100%),
+    linear-gradient(0deg, var(--c-bg) 0%, rgba(18,21,26,0.35) 22%, transparent 55%);
+}
+/* "Polished steel" sheen sweeping across the hero photo once on load */
+.hero-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 42%, rgba(236,233,227,0.35) 50%, transparent 58%);
+  background-size: 260% 260%;
+  background-position: 130% 0%;
+  opacity: 0;
+  mix-blend-mode: overlay;
+  animation: hero-sheen-sweep 2.6s cubic-bezier(.4,0,.2,1) 0.4s 1 both;
+}
+@keyframes hero-sheen-sweep {
+  0% { background-position: 130% 0%; opacity: 0; }
+  12% { opacity: 0.9; }
+  55% { opacity: 0.45; }
+  100% { background-position: -30% 0%; opacity: 0; }
 }
 .hero-texture {
   position: absolute;
   inset: -20% 0;
   opacity: 0.5;
+  z-index: 2;
   background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 6px);
   pointer-events: none;
   will-change: transform;
@@ -311,6 +347,7 @@ address { font-style: normal; }
   position: absolute;
   top: -15%; right: -10%;
   width: 55%; height: 130%;
+  z-index: 2;
   color: var(--c-steel-dark);
   opacity: 0.35;
   pointer-events: none;
@@ -318,8 +355,9 @@ address { font-style: normal; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-texture, .hero-blade { transform: none !important; }
+  .hero-sheen { display: none; }
 }
-.hero-inner { position: relative; max-width: 760px; }
+.hero-inner { position: relative; z-index: 3; max-width: 760px; }
 
 .eyebrow {
   font-family: var(--f-display);
@@ -397,7 +435,9 @@ address { font-style: normal; }
    Signature element — blade divider
    ========================================================================== */
 .blade-divider {
+  position: relative;
   height: 46px;
+  overflow: hidden;
   background:
     linear-gradient(115deg, transparent 48%, var(--c-border-soft) 48%, var(--c-border-soft) 50%, transparent 50%),
     repeating-linear-gradient(115deg, var(--c-surface) 0 40px, var(--c-surface-2) 40px 80px);
@@ -405,6 +445,50 @@ address { font-style: normal; }
 }
 .blade-divider-alt {
   transform: scaleY(-1);
+}
+
+/* ==========================================================================
+   Blade-line reveal — signature "razor slicing across the screen" transition.
+   A thin glowing diagonal line sweeps once across an element while a
+   diagonal clip-path opens behind it, like a blade cutting a clean edge.
+   Applied to feature photos/gallery figures (clip-path reveal) and to the
+   blade-dividers (glow sweep only, they already have their own shape).
+   ========================================================================== */
+.blade-reveal {
+  clip-path: polygon(0% 0%, 0% 0%, -18% 100%, 0% 100%);
+  transition: clip-path 1s cubic-bezier(.65,0,.35,1);
+}
+.blade-reveal.is-cut {
+  clip-path: polygon(0% 0%, 118% 0%, 100% 100%, 0% 100%);
+}
+.blade-reveal::before,
+.blade-divider::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: -8%;
+  width: 3px;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--c-brass-light) 30%, var(--c-steel-light) 50%, var(--c-brass-light) 70%, transparent);
+  box-shadow: 0 0 16px 2px rgba(211,172,120,0.65), 0 0 30px 6px rgba(199,207,215,0.3);
+  opacity: 0;
+  transform: skewX(-12deg);
+}
+.blade-reveal.is-cut::before,
+.blade-divider.is-cut::before {
+  animation: blade-sweep-line 1s cubic-bezier(.65,0,.35,1) both;
+}
+@keyframes blade-sweep-line {
+  0%   { left: -8%;  opacity: 0; }
+  10%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: 108%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blade-reveal { clip-path: none !important; transition: none !important; }
+  .blade-reveal::before, .blade-divider::before { display: none !important; }
 }
 
 /* ==========================================================================
@@ -508,7 +592,42 @@ address { font-style: normal; }
 }
 
 /* ==========================================================================
-   Gallery — CSS texture tiles
+   Services — feature photo
+   ========================================================================== */
+.services-feature {
+  position: relative;
+  margin: 0 0 var(--space-4);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--c-border-soft);
+  aspect-ratio: 21 / 8;
+  box-shadow: var(--shadow-2);
+}
+.services-feature img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.services-feature figcaption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 1.4em 1.6em;
+  font-family: var(--f-display);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+  color: var(--c-text);
+  background: linear-gradient(0deg, rgba(0,0,0,0.8), transparent);
+}
+@media (max-width: 760px) {
+  .services-feature { aspect-ratio: 4 / 3; }
+}
+
+/* ==========================================================================
+   Gallery — real photography
    ========================================================================== */
 .gallery-grid {
   display: grid;
@@ -522,6 +641,14 @@ address { font-style: normal; }
   overflow: hidden;
   border: 1px solid var(--c-border-soft);
   margin: 0;
+  background: var(--c-surface);
+}
+.gallery-tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .gallery-tile figcaption {
   position: absolute;
@@ -530,41 +657,6 @@ address { font-style: normal; }
   font-size: 0.82rem;
   color: var(--c-text);
   background: linear-gradient(0deg, rgba(0,0,0,0.75), transparent);
-}
-.tile-steel {
-  background:
-    repeating-linear-gradient(100deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 6px),
-    linear-gradient(135deg, #3a4149, #1c2027);
-}
-.tile-leather {
-  background:
-    radial-gradient(circle at 20% 20%, rgba(0,0,0,0.35) 0 2px, transparent 3px),
-    radial-gradient(circle at 60% 50%, rgba(0,0,0,0.35) 0 2px, transparent 3px),
-    radial-gradient(circle at 80% 80%, rgba(0,0,0,0.35) 0 2px, transparent 3px),
-    radial-gradient(circle at 40% 85%, rgba(0,0,0,0.35) 0 2px, transparent 3px),
-    radial-gradient(circle at 10% 65%, rgba(0,0,0,0.35) 0 2px, transparent 3px),
-    linear-gradient(160deg, #4a2f24, #2a1b15);
-  background-size: 34px 34px, 34px 34px, 34px 34px, 34px 34px, 34px 34px, cover;
-}
-.tile-blade {
-  background:
-    repeating-linear-gradient(45deg, rgba(212,172,120,0.16) 0 3px, transparent 3px 26px),
-    linear-gradient(160deg, #262c34, #12151a);
-}
-.tile-lines {
-  background:
-    repeating-linear-gradient(90deg, rgba(199,207,215,0.12) 0 1px, transparent 1px 14px),
-    linear-gradient(180deg, #20252c, #14171c);
-}
-.tile-brass {
-  background:
-    repeating-radial-gradient(circle at 50% 50%, rgba(180,138,85,0.25) 0 2px, transparent 2px 18px),
-    linear-gradient(135deg, #3a2f22, #1a1712);
-}
-.tile-strop {
-  background:
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.3) 0 3px, transparent 3px 22px),
-    linear-gradient(100deg, #3d2a1d, #201510);
 }
 
 /* ==========================================================================
@@ -595,6 +687,7 @@ address { font-style: normal; }
 }
 .score-stars { color: var(--c-brass-light); margin: 0.4em 0; }
 .score-count { color: var(--c-text-dim); font-size: 0.9rem; }
+.score-count-num { color: var(--c-brass-light); font-weight: 700; font-family: var(--f-display); }
 .trust-copy { max-width: 44ch; }
 .trust-copy p { color: var(--c-text-dim); }
 

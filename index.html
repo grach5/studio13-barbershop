@@ -74,6 +74,9 @@
 
   <!-- HERO -->
   <section class="hero" id="hero">
+    <img class="hero-photo" src="https://images.pexels.com/photos/17027433/pexels-photo-17027433.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" width="1920" height="1080" alt="Интерьер барбершопа Студия 13 в приглушённом вечернем свете" loading="eager" fetchpriority="high">
+    <div class="hero-sheen" aria-hidden="true"></div>
+    <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-texture" aria-hidden="true"></div>
     <div class="hero-blade" aria-hidden="true">
       <svg viewBox="0 0 400 400" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
@@ -135,6 +138,11 @@
         <p class="section-lead">Точные цены уточняются у мастера при записи — работаем индивидуально под тип волос, форму лица и пожелания.</p>
       </div>
 
+      <figure class="services-feature blade-reveal">
+        <img src="https://images.pexels.com/photos/4625615/pexels-photo-4625615.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600" width="1600" height="900" alt="Мастер Студии 13 выполняет классическое бритьё опасной бритвой" loading="lazy">
+        <figcaption>Ритуал классического бритья — шаг за шагом, без спешки</figcaption>
+      </figure>
+
       <div class="services-grid">
         <article class="service-card">
           <div class="service-icon" aria-hidden="true">
@@ -175,23 +183,29 @@
       </div>
 
       <div class="gallery-grid">
-        <figure class="gallery-tile tile-steel">
-          <figcaption>Брашированная сталь инструмента</figcaption>
+        <figure class="gallery-tile blade-reveal">
+          <img src="https://images.unsplash.com/photo-1553520847-2de98075ef5d?auto=format&amp;fit=crop&amp;w=800&amp;q=75" width="800" height="600" alt="Профессиональные ножницы и расчёска в руках мастера" loading="lazy">
+          <figcaption>Инструмент, доведённый до идеальной заточки</figcaption>
         </figure>
-        <figure class="gallery-tile tile-leather">
+        <figure class="gallery-tile blade-reveal">
+          <img src="https://images.unsplash.com/photo-1609595428104-34083e767708?auto=format&amp;fit=crop&amp;w=800&amp;q=75" width="800" height="600" alt="Классическое барберское кресло в студии" loading="lazy">
           <figcaption>Кожа барберского кресла</figcaption>
         </figure>
-        <figure class="gallery-tile tile-blade">
-          <figcaption>Мотив прямого лезвия</figcaption>
+        <figure class="gallery-tile blade-reveal">
+          <img src="https://images.pexels.com/photos/4625615/pexels-photo-4625615.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" width="800" height="600" alt="Крупный план бритья опасной бритвой" loading="lazy">
+          <figcaption>Ритуал классического бритья</figcaption>
         </figure>
-        <figure class="gallery-tile tile-lines">
-          <figcaption>Точность контурных линий</figcaption>
+        <figure class="gallery-tile blade-reveal">
+          <img src="https://images.unsplash.com/photo-1578209143563-177db741ac0c?auto=format&amp;fit=crop&amp;w=800&amp;q=75" width="800" height="600" alt="Атмосфера интерьера барбершопа" loading="lazy">
+          <figcaption>Точность и атмосфера студии</figcaption>
         </figure>
-        <figure class="gallery-tile tile-brass">
-          <figcaption>Латунная фурнитура интерьера</figcaption>
+        <figure class="gallery-tile blade-reveal">
+          <img src="https://images.unsplash.com/photo-1764712784236-7019d1565cb7?auto=format&amp;fit=crop&amp;w=800&amp;q=75" width="800" height="600" alt="Набор кистей и бритв мастера на полке" loading="lazy">
+          <figcaption>Инструменты и аксессуары мастера</figcaption>
         </figure>
-        <figure class="gallery-tile tile-strop">
-          <figcaption>Ремень для правки бритвы</figcaption>
+        <figure class="gallery-tile blade-reveal">
+          <img src="https://images.pexels.com/photos/17027433/pexels-photo-17027433.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" width="800" height="600" alt="Вечерняя атмосфера в зале барбершопа" loading="lazy">
+          <figcaption>Атмосфера вечерней смены</figcaption>
         </figure>
       </div>
     </div>
@@ -207,7 +221,7 @@
 
       <div class="trust-panel">
         <div class="trust-score">
-          <span class="score-number">5.0</span>
+          <span class="score-number" data-count-to="5.0">5.0</span>
           <div class="score-stars" role="img" aria-label="Оценка 5.0 из 5">
             <svg width="120" height="22" viewBox="0 0 120 22" fill="none" aria-hidden="true">
               <g fill="currentColor">
@@ -219,7 +233,7 @@
               </g>
             </svg>
           </div>
-          <span class="score-count">30 отзывов на 2ГИС</span>
+          <span class="score-count"><strong class="score-count-num" data-count-to="30">30</strong> отзывов на 2ГИС</span>
         </div>
 
         <div class="trust-copy">
